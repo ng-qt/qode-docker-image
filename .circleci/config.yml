@@ -1,0 +1,48 @@
+version: 2
+jobs:
+  validate:
+    machine: true
+    steps:
+      - checkout
+      - run:
+          name: Shellcheck
+          command: |
+            sudo apt-get install shellcheck
+            shellcheck *.sh
+      - run:
+          name: Hadolint
+          command: docker run --rm -i hadolint/hadolint < Dockerfile
+
+  build:
+    machine: true
+    steps:
+      - checkout
+      - run:
+          name: Build Docker image
+          command: docker build -t ngqt/qode:$CIRCLE_SHA1 .
+
+  push:
+    machine: true
+    steps:
+      - checkout
+      - run:
+          name: Push to Dockerhub
+          command: |
+            docker login -u $DOCKERHUB_USER $DOCKERHUB_PASS
+            docker push ngqt/qode:$CIRCLE_SHA1
+
+workflows:
+  version: 2
+  validate-build-push:
+    jobs:
+      - validate
+      - build:
+          requires:
+            - validate
+      - push:
+          filters:
+            branches:
+              only:
+                - master
+          requires:
+            - build
