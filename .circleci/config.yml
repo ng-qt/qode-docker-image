@@ -80,7 +80,12 @@ workflows:
             - validate
   build-publish-tag:
     jobs:
-      - validate
+      - validate:
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
       - build-tag:
           filters:
             tags:
