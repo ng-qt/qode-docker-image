@@ -4,6 +4,11 @@ var_1: &job_defaults
   docker:
     - image: circleci/buildpack-deps:stretch
 
+var_2: &build_image
+  run:
+    name: Build Docker image
+    command: docker build -t $IMAGE_NAME:latest .
+
 version: 2.1
 
 executors:
@@ -15,6 +20,7 @@ jobs:
     <<: *job_defaults
     steps:
       - checkout
+      - setup_remote_docker
       - run:
           name: Shellcheck
           command: |
@@ -26,13 +32,18 @@ jobs:
           command: docker run --rm -i hadolint/hadolint < Dockerfile
 
   build:
+    <<: *job_defaults
+    steps:
+      - checkout
+      - setup_remote_docker
+      - *build_image
+
+  build-tag:
     executor: docker-publisher
     steps:
       - checkout
       - setup_remote_docker
-      - run:
-          name: Build Docker image
-          command: docker build -t $IMAGE_NAME:latest .
+      - *build_image
       - run:
           name: Archive Docker image
           command: docker save -o image.tar $IMAGE_NAME
@@ -40,7 +51,8 @@ jobs:
           root: .
           paths:
             - ./image.tar
-  publish:
+
+  publish-tag:
     executor: docker-publisher
     steps:
       - attach_workspace:
@@ -66,10 +78,10 @@ workflows:
       - build:
           requires:
             - validate
-  publish:
+  build-publish-tag:
     jobs:
       - validate
-      - build:
+      - build-tag:
           filters:
             tags:
               only: /^v.*/
@@ -77,9 +89,9 @@ workflows:
               ignore: /.*/
           requires:
             - validate
-      - publish:
+      - publish-tag:
           requires:
-            - build
+            - build-tag
           filters:
             tags:
               only: /^v.*/
