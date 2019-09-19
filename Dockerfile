@@ -10,6 +10,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 
-COPY export_paths.sh .
+ARG QT_QPA_PLATFORM=offscreen
 
-RUN ./export_paths.sh
+ENV QMAKE_PATH=/usr/lib/x86_64-linux-gnu/qt5/bin/qmake
+ENV QT_INCLUDE_DIRS=/usr/include/x86_64-linux-gnu/qt5
+ENV QT_LIBRARIES=/usr/lib/x86_64-linux-gnu
+ENV QT_QPA_PLATFORM=$QT_QPA_PLATFORM

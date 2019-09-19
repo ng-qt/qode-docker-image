@@ -22,12 +22,6 @@ jobs:
       - checkout
       - setup_remote_docker
       - run:
-          name: Shellcheck
-          command: |
-            sudo apt-get update
-            sudo apt-get install shellcheck
-            shellcheck *.sh
-      - run:
           name: Hadolint
           command: docker run --rm -i hadolint/hadolint < Dockerfile
 
