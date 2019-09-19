@@ -1,15 +1,17 @@
-# qode-docker-image
-Docker image that comes with Qt5 and Node.js preinstalled
+## qode-docker-image
+Docker image that comes preinstalled with Qt5 and Node.js
 
-## Installation
+### Installation
 ```
 $ docker pull ngqt/qode
 ```
 
-## Usage
-It comes predefined with the following environment variables for easier referencing
+### Environment
+It has the following environment variables set by default:
 
-|                     |                                     |
-|---------------------|-------------------------------------|
-| **QT_LIBRARIES**    | Path to the installed Qt5 libraries |
-| **QT_INCLUDE_DIRS** | Path to the included Qt5 headers    |
+| Name | Value |
+|-|-|
+| QT_LIBRARIES | /usr/include/x86_64-linux-gnu/qt5 |
+| QT_INCLUDE_DIRS | /usr/lib/x86_64-linux-gnu |
+| QMAKE_PATH | /usr/lib/x86_64-linux-gnu/qt5/bin/qmake |
+| [QT_QPA_PLATFORM](https://doc.qt.io/qt-5/embedded-linux.html) | offscreen |
