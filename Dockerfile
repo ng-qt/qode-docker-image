@@ -1,4 +1,4 @@
-FROM node:12
+FROM node:19
 
 # Specify Docker arguments
 ARG QT_QPA_PLATFORM=offscreen
